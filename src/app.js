@@ -11,7 +11,7 @@ app.use(cors());
 const repositories = [];
 
 app.get("/repositories", (req, res) => {
-  return res.status(200).json({ repositories })
+  return res.status(200).send([ repositories ])
 });
 
 app.post("/repositories", (req, res) => {
