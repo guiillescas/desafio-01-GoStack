@@ -47,7 +47,7 @@ app.put("/repositories/:id", (req, res) => {
   }
 
   const repository = {
-    id,
+    id: repositories[repositoryIndex].id,
     likes: repositories[repositoryIndex].likes,
     techs,
     title,
@@ -56,7 +56,7 @@ app.put("/repositories/:id", (req, res) => {
 
   repositories[repositoryIndex] = repository
 
-  return res.status(200).json({ repository })
+  return res.status(200).json( repository )
 });
 
 app.delete("/repositories/:id", (req, res) => {
