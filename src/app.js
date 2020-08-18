@@ -11,7 +11,7 @@ app.use(cors());
 const repositories = [];
 
 app.get("/repositories", (req, res) => {
-  return res.status(200).send([ repositories ])
+  return res.status(200).send(repositories)
 });
 
 app.post("/repositories", (req, res) => {
@@ -19,20 +19,20 @@ app.post("/repositories", (req, res) => {
 
   const repository = {
     id: uuid(),
+    likes: 0,
+    techs,
     title,
     url,
-    techs: techs.replace(/\s/g, '').split(","),
-    like: 0
   }
 
   repositories.push(repository)
 
-  return res.status(200).json({ repository })
+  return res.status(200).json(repository)
 });
 
 app.put("/repositories/:id", (req, res) => {
   const { id } = req.params
-  const { title, url, techs, like } = req.body
+  const { title, url, techs } = req.body
 
   if (!id) return res.status(400).json({ error: 'You need to provide and id to update an repository! :)' })
 
@@ -48,15 +48,15 @@ app.put("/repositories/:id", (req, res) => {
 
   const repository = {
     id,
+    likes: repositories[repositoryIndex].likes,
+    techs,
     title,
     url,
-    techs: techs.replace(/\s/g, '').split(","),
-    like: repositories[repositoryIndex].like,
   }
 
   repositories[repositoryIndex] = repository
 
-  return res.status(400).json({ repository })
+  return res.status(200).json({ repository })
 });
 
 app.delete("/repositories/:id", (req, res) => {
@@ -70,7 +70,7 @@ app.delete("/repositories/:id", (req, res) => {
 
   repositories.splice(repositoryIndex, 1)
 
-  return res.status(400).send('')
+  return res.status(204).send('')
 });
 
 app.post("/repositories/:id/like", (req, res) => {
@@ -78,11 +78,11 @@ app.post("/repositories/:id/like", (req, res) => {
 
   const repositoryIndex = repositories.findIndex(repository => repository.id === id)
 
-  if (repositoryIndex < 0 ) {
+  if ( !isUuid(id) ) {
     return res.status(400).json({ error: 'Repository not found :(' })
   }
 
-  repositories[repositoryIndex].like = repositories[repositoryIndex].like + 1
+  repositories[repositoryIndex].likes = repositories[repositoryIndex].likes + 1
   
   return res.status(200).json(repositories[repositoryIndex])
 });
